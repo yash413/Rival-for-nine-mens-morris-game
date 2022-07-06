@@ -1,0 +1,221 @@
+p1 = 0
+
+
+def static_estimation(b):
+    global p1
+    p1 += 1
+    numWhitePieces = 0
+    numBlackPieces = 0
+    for i in b:
+        if i == "W":
+            numWhitePieces += 1
+        elif i == "B":
+            numBlackPieces += 1
+    return numWhitePieces - numBlackPieces
+
+
+def GenerateAdd(b):
+    L = []
+    for i in range(len(b)):
+        if b[i] == 'x':
+            b1 = b[:]
+            b1[i] = 'W'
+            if closeMill(i, b1):
+                generateRemove(b1, L)
+            else:
+                L.append(b1)
+    return L
+
+
+def closeMill(j, b):
+    C = b[j]
+
+    def zero():
+        if b[2] == b[4] == C:
+            return True
+        else:
+            return False
+
+    def one():
+        if (b[3] == b[5] == C) or (b[8] == b[17] == C):
+            return True
+        else:
+            return False
+
+    def two():
+        if b[0] == b[4] == C:
+            return True
+        else:
+            return False
+
+    def three():
+        if (b[1] == b[5] == C) or (b[7] == b[14] == C):
+            return True
+        else:
+            return False
+
+    def four():
+        if b[0] == b[2] == C:
+            return True
+        else:
+            return False
+
+    def five():
+        if (b[1] == b[3] == C) or (b[6] == b[11] == C):
+            return True
+        else:
+            return False
+
+    def six():
+        if (b[5] == b[11] == C) or (b[7] == b[8] == C):
+            return True
+        else:
+            return False
+
+    def seven():
+        if (b[6] == b[8] == C) or (b[3] == b[14] == C):
+            return True
+        else:
+            return False
+
+    def eight():
+        if (b[6] == b[7] == C) or (b[1] == b[17] == C):
+            return True
+        else:
+            return False
+
+    def nine():
+        if (b[10] == b[11] == C) or (b[12] == b[15] == C):
+            return True
+        else:
+            return False
+
+    def ten():
+        if (b[9] == b[11] == C) or (b[13] == b[16] == C):
+            return True
+        else:
+            return False
+
+    def eleven():
+        if (b[9] == b[10] == C) or (b[14] == b[17] == C):
+            return True
+        else:
+            return False
+
+    def twelve():
+        if (b[9] == b[15] == C) or (b[13] == b[14] == C):
+            return True
+        else:
+            return False
+
+    def thirteen():
+        if (b[12] == b[14] == C) or (b[10] == b[16] == C):
+            return True
+        else:
+            return False
+
+    def fourteen():
+        if (b[12] == b[13] == C) or (b[11] == b[17] == C):
+            return True
+        else:
+            return False
+
+    def fifteen():
+        if (b[16] == b[17] == C) or (b[12] == b[9] == C):
+            return True
+        else:
+            return False
+
+    def sixteen():
+        if (b[15] == b[17] == C) or (b[13] == b[10] == C):
+            return True
+        else:
+            return False
+
+    def seventeen():
+        if (b[15] == b[16] == C) or (b[14] == b[11] == C):
+            return True
+        else:
+            return False
+
+    switch = {0: zero, 1: one, 2: two, 3: three, 4: four, 5: five,
+              6: six, 7: seven, 8: eight, 9: nine, 10: ten, 11: eleven,
+              12: twelve, 13: thirteen, 14: fourteen, 15: fifteen, 16: sixteen, 17: seventeen}
+
+    return switch[j]()
+
+
+def generateRemove(b, L):
+    for i in range(len(b)):
+        if b[i] == "B":
+            if not closeMill(i, b):
+                b1 = b[:]
+                b1[i] = 'x'
+                L.append(b1)
+            else:
+                L.append(b)
+
+
+def WtB(a):
+    b = a[:]
+    for i in range(len(b)):
+        if b[i] == "W":
+            b[i] = "B"
+        elif b[i] == "B":
+            b[i] = "W"
+    return b
+
+
+def MaxMin_alb(a, ply, al, beta):
+    if ply == d:
+        return static_estimation(a)
+    else:
+        ply += 1
+        v = -10000
+        y = GenerateAdd(a)
+        for i in y:
+            m = MinMax_alb(i, ply, al, beta)
+            if m > v:
+                x = i
+                v = m
+            if v >= beta:
+                if ply == 1:
+                    return x, v
+                else:
+                    return v
+            else:
+                al = max(v, al)
+        if ply == 1:
+            return x, v
+        return v
+
+
+def MinMax_alb(b, p, al, beta):
+    if p == d:
+        return static_estimation(b)
+    else:
+        p += 1
+        b = WtB(b)
+        v = 10000
+        x = GenerateAdd(b)
+        for i in x:
+            i = WtB(i)
+            v = min(v, MaxMin_alb(i, p, al, beta))
+            if v <= al:
+                return v
+            else:
+                beta = min(v, beta)
+        return v
+
+
+(f1, f2, d) = list(input().split())
+d = int(d)
+file1 = open(f1)
+l1 = list(file1.read())
+(A1, A2) = MaxMin_alb(l1, 0, -10000, 10000)
+s = ""
+for i in A1:
+    s += i
+file2 = open(f2, "w")
+file2.write("Board position is: " + s + "\n\n" + "Positions evaluated by static estimation: " + str(p1) + "\n\n"
+            + "MINIMAX estimate: " + str(A2))
