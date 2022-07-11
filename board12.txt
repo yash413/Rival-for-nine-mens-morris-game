@@ -1,0 +1,5 @@
+Board position is: xWWxBWBxWWBWWxBBBx
+
+Positions evaluated by static estimation: 36935
+
+MINIMAX estimate: -1
