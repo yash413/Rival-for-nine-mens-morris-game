@@ -9,13 +9,23 @@ def static_estimation(b):
     numBlackPieces = 0
     numWhiteMills = 0
     numBlackMills = 0
+    numW2piece = 0 
+    numB2piece = 0
     for i in range(len(b)):
         if b[i] == 'W':
             if closeMill(i, b):
                 numWhiteMills += 1
-        if b[i] == 'B':
+        elif b[i] == 'B':
             if closeMill(i, b):
                 numBlackMills += 1
+        elif b[i] == 'x':
+            b1 = b[:]
+            b1[i] = 'W'
+            if closeMill(i,b1):
+                numW2piece += 1
+            b1[i] = 'B'
+            if closeMill(i,b1):
+                numB2piece += 1
     numWhiteMills = int(numWhiteMills/3) + 1
     numBlackMills = int(numBlackMills/3) + 1
     for i in b:
@@ -25,7 +35,7 @@ def static_estimation(b):
             numBlackPieces += 1
     if len(b) == 19:
         p2 = b[-1]
-    return p2 + (numWhiteMills - numBlackMills) + (numWhitePieces - numBlackPieces)
+    return p2 + (numWhiteMills - numBlackMills) + (numWhitePieces - numBlackPieces) + (numW2piece - numB2piece)
 
 
 def GenerateAdd(b, ply):
