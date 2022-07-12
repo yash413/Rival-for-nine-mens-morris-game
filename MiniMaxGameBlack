@@ -1,0 +1,327 @@
+p1 = 0
+
+
+def static_estimation(b):
+    global p1
+    p1 += 1
+    numWhitePieces = 0
+    numBlackPieces = 0
+    for i in b:
+        if i == "W":
+            numWhitePieces += 1
+        elif i == "B":
+            numBlackPieces += 1
+    if numBlackPieces <= 2:
+        return 10000
+    elif numWhitePieces <= 2:
+        return -10000
+    elif numBlackMoves(b) == 0:
+        return 10000
+    else:
+        return (1000 * (numWhitePieces - numBlackPieces)) - numBlackMoves(b)
+
+
+def numBlackMoves(l):
+    ll = WtB(l)
+    n = GenerateMovesMidgameEndgame(ll)
+    if n == 3:
+        x = GenerateHopping(ll)
+    else:
+        x = GenerateMove(ll)
+    return len(x)
+
+
+def neighbours(j):
+    def zero():
+        return [1, 2, 15]
+
+    def one():
+        return [0, 3, 8]
+
+    def two():
+        return [0, 3, 4, 12]
+
+    def three():
+        return [1, 2, 5, 7]
+
+    def four():
+        return [2, 5, 9]
+
+    def five():
+        return [3, 4, 6]
+
+    def six():
+        return [5, 7, 11]
+
+    def seven():
+        return [3, 6, 8, 14]
+
+    def eight():
+        return [1, 7, 17]
+
+    def nine():
+        return [4, 10, 12]
+
+    def ten():
+        return [9, 11, 13]
+
+    def eleven():
+        return [6, 10, 14]
+
+    def twelve():
+        return [2, 9, 13, 15]
+
+    def thirteen():
+        return [10, 12, 14, 16]
+
+    def fourteen():
+        return [7, 11, 13, 17]
+
+    def fifteen():
+        return [0, 12, 16]
+
+    def sixteen():
+        return [13, 15, 17]
+
+    def seventeen():
+        return [8, 14, 16]
+
+    switch = {0: zero, 1: one, 2: two, 3: three, 4: four, 5: five,
+              6: six, 7: seven, 8: eight, 9: nine, 10: ten, 11: eleven,
+              12: twelve, 13: thirteen, 14: fourteen, 15: fifteen, 16: sixteen, 17: seventeen}
+
+    return switch[j]()
+
+
+def closeMill(j, b):
+    C = b[j]
+
+    def zero():
+        if b[2] == b[4] == C:
+            return True
+        else:
+            return False
+
+    def one():
+        if (b[3] == b[5] == C) or (b[8] == b[17] == C):
+            return True
+        else:
+            return False
+
+    def two():
+        if b[0] == b[4] == C:
+            return True
+        else:
+            return False
+
+    def three():
+        if (b[1] == b[5] == C) or (b[7] == b[14] == C):
+            return True
+        else:
+            return False
+
+    def four():
+        if b[0] == b[2] == C:
+            return True
+        else:
+            return False
+
+    def five():
+        if (b[1] == b[3] == C) or (b[6] == b[11] == C):
+            return True
+        else:
+            return False
+
+    def six():
+        if (b[5] == b[11] == C) or (b[7] == b[8] == C):
+            return True
+        else:
+            return False
+
+    def seven():
+        if (b[6] == b[8] == C) or (b[3] == b[14] == C):
+            return True
+        else:
+            return False
+
+    def eight():
+        if (b[6] == b[7] == C) or (b[1] == b[17] == C):
+            return True
+        else:
+            return False
+
+    def nine():
+        if (b[10] == b[11] == C) or (b[12] == b[15] == C):
+            return True
+        else:
+            return False
+
+    def ten():
+        if (b[9] == b[11] == C) or (b[13] == b[16] == C):
+            return True
+        else:
+            return False
+
+    def eleven():
+        if (b[9] == b[10] == C) or (b[14] == b[17] == C):
+            return True
+        else:
+            return False
+
+    def twelve():
+        if (b[9] == b[15] == C) or (b[13] == b[14] == C):
+            return True
+        else:
+            return False
+
+    def thirteen():
+        if (b[12] == b[14] == C) or (b[10] == b[16] == C):
+            return True
+        else:
+            return False
+
+    def fourteen():
+        if (b[12] == b[13] == C) or (b[11] == b[17] == C):
+            return True
+        else:
+            return False
+
+    def fifteen():
+        if (b[16] == b[17] == C) or (b[12] == b[9] == C):
+            return True
+        else:
+            return False
+
+    def sixteen():
+        if (b[15] == b[17] == C) or (b[13] == b[10] == C):
+            return True
+        else:
+            return False
+
+    def seventeen():
+        if (b[15] == b[16] == C) or (b[14] == b[11] == C):
+            return True
+        else:
+            return False
+
+    switch = {0: zero, 1: one, 2: two, 3: three, 4: four, 5: five,
+              6: six, 7: seven, 8: eight, 9: nine, 10: ten, 11: eleven,
+              12: twelve, 13: thirteen, 14: fourteen, 15: fifteen, 16: sixteen, 17: seventeen}
+
+    return switch[j]()
+
+
+def generateRemove(b, L):
+    for i in range(len(b)):
+        if b[i] == "B":
+            if not closeMill(i, b):
+                b1 = b[:]
+                b1[i] = 'x'
+                L.append(b1)
+            else:
+                L.append(b)
+
+
+def WtB(a):
+    b = a[:]
+    for i in range(len(b)):
+        if b[i] == "W":
+            b[i] = "B"
+        elif b[i] == "B":
+            b[i] = "W"
+    return b
+
+
+def GenerateMove(b):
+    L = []
+    for i in range(len(b)):
+        if b[i] == "W":
+            n = neighbours(i)
+            for j in n:
+                if b[j] == "x":
+                    b1 = b[:]
+                    b1[i] = "x"
+                    b1[j] = "W"
+                    if closeMill(j, b1):
+                        generateRemove(b1, L)
+                    else:
+                        L.append(b1)
+    return L
+
+
+def GenerateHopping(b):
+    L = []
+    for i in range(len(b)):
+        if b[i] == "W":
+            for j in range(len(b)):
+                if b[i] == "x":
+                    b1 = b[:]
+                    b1[i] = "x"
+                    b1[j] = "W"
+                    if closeMill(j, b1):
+                        generateRemove(b1, L)
+                    else:
+                        L.append(b1)
+    return L
+
+
+def GenerateMovesMidgameEndgame(b):
+    n = 0
+    for i in b:
+        if i == "W":
+            n += 1
+    return n
+
+
+def MaxMin(a, ply):
+    if ply == d:
+        return static_estimation(a)
+    else:
+        ply += 1
+        v = -10000
+        n = GenerateMovesMidgameEndgame(a)
+        if n == 3:
+            y = GenerateHopping(a)
+        else:
+            y = GenerateMove(a)
+        for i in y:
+            m = MinMax(i, ply)
+            if m > v:
+                x = i
+                v = m
+        if ply == 1:
+            return x, v
+        return v
+
+
+def MinMax(b, p):
+    if p == d:
+        return static_estimation(b)
+    else:
+        p += 1
+        b = WtB(b)
+        v = 10000
+        n = GenerateMovesMidgameEndgame(b)
+        if n == 3:
+            x = GenerateHopping(b)
+        else:
+            x = GenerateMove(b)
+        for i in x:
+            i = WtB(i)
+            v = min(v, MaxMin(i, p))
+        return v
+
+
+(f1, f2, d) = list(input().split())
+d = int(d)
+file1 = open(f1)
+l1 = list(file1.read())
+ll1 = WtB(l1)
+(A1, A2) = MaxMin(l1, 0)
+A1 = WtB(A1)
+s = ""
+for i in A1:
+    s += i
+file2 = open(f2, "w")
+file2.write("Board position is: " + s + "\n\n" + "Positions evaluated by static estimation: " + str(p1) + "\n\n"
+            + "MINIMAX estimate: " + str(A2))
