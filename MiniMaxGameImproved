@@ -11,13 +11,34 @@ def static_estimation(b):
     numBlackMills = 0
     numW2piece = 0 
     numB2piece = 0
+    Whiteblockedpieces = 0
+    Blackblockedpieces = 0
+    for i in b:
+        if i == "W":
+            numWhitePieces += 1
+        elif i == "B":
+            numBlackPieces += 1
     for i in range(len(b)):
         if b[i] == 'W':
             if closeMill(i, b):
                 numWhiteMills += 1
+            if numWhitePieces > 3:
+                n = neighbours(i)
+                for j in n:
+                    if b[j] == 'x':
+                        break
+                    else:
+                        Whiteblockedpieces += 1
         elif b[i] == 'B':
             if closeMill(i, b):
                 numBlackMills += 1
+            if numBlackPieces > 3:
+                n = neighbours(i)
+                for j in n:
+                    if b[j] == 'x':
+                        break
+                    else:
+                        Blackblockedpieces += 1
         elif b[i] == 'x':
             b1 = b[:]
             b1[i] = 'W'
@@ -28,11 +49,6 @@ def static_estimation(b):
                 numB2piece += 1
     numWhiteMills = int(numWhiteMills/3) + 1
     numBlackMills = int(numBlackMills/3) + 1
-    for i in b:
-        if i == "W":
-            numWhitePieces += 1
-        elif i == "B":
-            numBlackPieces += 1
     if len(b) == 19:
         p2 = b[-1]
     if numBlackPieces <= 2:
@@ -42,7 +58,7 @@ def static_estimation(b):
     elif numBlackMoves(b) == 0:
         return 10000
     else:
-        return (20 * (numWhiteMills - numBlackMills)) + (15 * p2) + (10 * (numW2piece- numB2piece)) + (5 * (numWhitePieces - numBlackPieces)) - numBlackMoves(b)
+        return (25 * (numWhiteMills - numBlackMills)) + (20 * p2) + (15 * (Whiteblockedpieces - Blackblockedpieces)) + (10 * (numW2piece- numB2piece)) + (5 * (numWhitePieces - numBlackPieces)) - numBlackMoves(b)
 
 
 def numBlackMoves(l):

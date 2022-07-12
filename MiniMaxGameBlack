@@ -317,7 +317,7 @@ d = int(d)
 file1 = open(f1)
 l1 = list(file1.read())
 ll1 = WtB(l1)
-(A1, A2) = MaxMin(l1, 0)
+(A1, A2) = MaxMin(ll1, 0)
 A1 = WtB(A1)
 s = ""
 for i in A1:
