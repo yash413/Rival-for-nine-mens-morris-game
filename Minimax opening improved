@@ -35,7 +35,7 @@ def static_estimation(b):
             numBlackPieces += 1
     if len(b) == 19:
         p2 = b[-1]
-    return p2 + (numWhiteMills - numBlackMills) + (numWhitePieces - numBlackPieces) + (numW2piece - numB2piece)
+    return (20 * (numWhiteMills - numBlackMills)) + (15 * p2) + (10 * (numW2piece - numB2piece)) + 5 * (numWhitePieces - numBlackPieces)
 
 
 def GenerateAdd(b, ply):
