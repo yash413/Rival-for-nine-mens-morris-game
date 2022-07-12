@@ -272,16 +272,6 @@ def generateRemove(b, L, p):
                 L.append(b)
 
 
-def WtB(a):
-    b = a[:]
-    for i in range(len(b)):
-        if b[i] == "W":
-            b[i] = "B"
-        elif b[i] == "B":
-            b[i] = "W"
-    return b
-
-
 def GenerateMove(b, ply):
     L = []
     for i in range(len(b)):
@@ -323,6 +313,34 @@ def GenerateMovesMidgameEndgame(b):
     return n
 
 
+def WtB(a):
+    b = a[:]
+    for i in range(len(b)):
+        if b[i] == "W":
+            b[i] = "B"
+        elif b[i] == "B":
+            b[i] = "W"
+    return b
+
+
+def MinMax(b, p):
+    if p == d:
+        return static_estimation(b)
+    else:
+        p += 1
+        b = WtB(b)
+        v = 10000
+        n = GenerateMovesMidgameEndgame(b)
+        if n == 3:
+            x = GenerateHopping(b, p)
+        else:
+            x = GenerateMove(b, p)
+        for i in x:
+            i = WtB(i)
+            v = min(v, MaxMin(i, p))
+        return v
+
+
 def MaxMin(a, ply):
     if ply == d:
         return static_estimation(a)
@@ -341,24 +359,6 @@ def MaxMin(a, ply):
                 v = m
         if ply == 1:
             return x, v
-        return v
-
-
-def MinMax(b, p):
-    if p == d:
-        return static_estimation(b)
-    else:
-        p += 1
-        b = WtB(b)
-        v = 10000
-        n = GenerateMovesMidgameEndgame(b)
-        if n == 3:
-            x = GenerateHopping(b, p)
-        else:
-            x = GenerateMove(b, p)
-        for i in x:
-            i = WtB(i)
-            v = min(v, MaxMin(i, p))
         return v
 
 

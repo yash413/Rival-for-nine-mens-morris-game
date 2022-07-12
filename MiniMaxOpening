@@ -14,19 +14,6 @@ def static_estimation(b):
     return numWhitePieces - numBlackPieces
 
 
-def GenerateAdd(b):
-    L = []
-    for i in range(len(b)):
-        if b[i] == 'x':
-            b1 = b[:]
-            b1[i] = 'W'
-            if closeMill(i, b1):
-                generateRemove(b1, L)
-            else:
-                L.append(b1)
-    return L
-
-
 def closeMill(j, b):
     C = b[j]
 
@@ -156,6 +143,19 @@ def generateRemove(b, L):
                 L.append(b)
 
 
+def GenerateAdd(b):
+    L = []
+    for i in range(len(b)):
+        if b[i] == 'x':
+            b1 = b[:]
+            b1[i] = 'W'
+            if closeMill(i, b1):
+                generateRemove(b1, L)
+            else:
+                L.append(b1)
+    return L
+
+
 def WtB(a):
     b = a[:]
     for i in range(len(b)):
@@ -164,6 +164,20 @@ def WtB(a):
         elif b[i] == "B":
             b[i] = "W"
     return b
+
+
+def MinMax(b, p):
+    if p == d:
+        return static_estimation(b)
+    else:
+        p += 1
+        b = WtB(b)
+        v = 10000
+        x = GenerateAdd(b)
+        for i in x:
+            i = WtB(i)
+            v = min(v, MaxMin(i, p))
+        return v
 
 
 def MaxMin(a, ply):
@@ -180,20 +194,6 @@ def MaxMin(a, ply):
                 v = m
         if ply == 1:
             return x, v
-        return v
-
-
-def MinMax(b, p):
-    if p == d:
-        return static_estimation(b)
-    else:
-        p += 1
-        b = WtB(b)
-        v = 10000
-        x = GenerateAdd(b)
-        for i in x:
-            i = WtB(i)
-            v = min(v, MaxMin(i, p))
         return v
 
 
