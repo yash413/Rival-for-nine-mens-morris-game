@@ -244,7 +244,7 @@ def GenerateHopping(b):
     for i in range(len(b)):
         if b[i] == "W":
             for j in range(len(b)):
-                if b[i] == "x":
+                if b[j] == "x":
                     b1 = b[:]
                     b1[i] = "x"
                     b1[j] = "W"
@@ -308,7 +308,7 @@ def MaxMin_alb(a, ply, al, beta):
             y = GenerateMove(a)
         for i in y:
             m = MinMax_alb(i, ply, al, beta)
-            if m > v:
+            if m >= v:
                 x = i
                 v = m
             if v >= beta:
