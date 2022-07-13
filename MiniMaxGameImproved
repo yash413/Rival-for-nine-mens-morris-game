@@ -58,7 +58,7 @@ def static_estimation(b):
     elif numBlackMoves(b) == 0:
         return 10000
     else:
-        return (25 * (numWhiteMills - numBlackMills)) + (20 * p2) + (15 * (Whiteblockedpieces - Blackblockedpieces)) + (10 * (numW2piece- numB2piece)) + (5 * (numWhitePieces - numBlackPieces)) - numBlackMoves(b)
+        return (25 * (numWhiteMills - numBlackMills)) + (15 * p2) + (20 * (Whiteblockedpieces - Blackblockedpieces)) + (10 * (numW2piece- numB2piece)) + (5 * (numWhitePieces - numBlackPieces)) - numBlackMoves(b)
 
 
 def numBlackMoves(l):
