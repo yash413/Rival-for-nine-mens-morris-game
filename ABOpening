@@ -191,6 +191,7 @@ def MaxMin_alb(a, ply, al, beta):
         ply += 1
         v = -10000
         y = GenerateAdd(a)
+        x = 0
         for i in y:
             m = MinMax_alb(i, ply, al, beta)
             if m > v:
@@ -204,6 +205,8 @@ def MaxMin_alb(a, ply, al, beta):
             else:
                 al = max(v, al)
         if ply == 1:
+            if x == 0:
+                x = y[0]
             return x, v
         return v
 

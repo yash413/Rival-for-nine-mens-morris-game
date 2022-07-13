@@ -306,9 +306,10 @@ def MaxMin_alb(a, ply, al, beta):
             y = GenerateHopping(a)
         else:
             y = GenerateMove(a)
+        x = 0
         for i in y:
             m = MinMax_alb(i, ply, al, beta)
-            if m >= v:
+            if m > v:
                 x = i
                 v = m
             if v >= beta:
@@ -319,6 +320,8 @@ def MaxMin_alb(a, ply, al, beta):
             else:
                 al = max(v, al)
         if ply == 1:
+            if x == 0:
+                x = y[0]
             return x, v
         return v
 

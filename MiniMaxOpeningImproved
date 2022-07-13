@@ -221,12 +221,15 @@ def MaxMin(a, ply):
         ply += 1
         v = -10000
         y = GenerateAdd(a, ply)
+        x = 0
         for i in y:
             m = MinMax(i, ply)
             if m > v:
                 x = i
                 v = m
         if ply == 1:
+            if x == 0:
+                x = y[0]
             return x, v
         return v
 
