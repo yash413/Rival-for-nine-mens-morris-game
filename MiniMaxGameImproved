@@ -258,6 +258,7 @@ def closeMill(j, b):
 
 
 def generateRemove(b, L, p):
+    a1 = len(L)
     for i in range(len(b)):
         if b[i] == "B":
             if not closeMill(i, b):
@@ -269,13 +270,14 @@ def generateRemove(b, L, p):
                     else:
                         b1.append(int(1))
                 L.append(b1)
+    a2 = len(L)
+    if a1 == a2:
+        if p == d:
+            if d % 2 == 0:
+                b.append(int(-1))
             else:
-                if p == d:
-                    if d % 2 == 0:
-                        b.append(int(-1))
-                    else:
-                        b.append(int(1))
-                L.append(b)
+                b.append(int(1))
+        L.append(b)
 
 
 def GenerateMove(b, ply):

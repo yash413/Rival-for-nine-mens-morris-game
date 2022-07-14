@@ -133,14 +133,16 @@ def closeMill(j, b):
 
 
 def generateRemove(b, L):
+    a1 = len(L)
     for i in range(len(b)):
         if b[i] == "B":
             if not closeMill(i, b):
                 b1 = b[:]
                 b1[i] = 'x'
                 L.append(b1)
-            else:
-                L.append(b)
+    a2 = len(L)
+    if a1 == a2:
+        L.append(b)
 
 
 def GenerateAdd(b):
