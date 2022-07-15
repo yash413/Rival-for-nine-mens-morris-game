@@ -22,12 +22,6 @@ def static_estimation(b):
         if b[i] == 'W':
             if closeMill(i, b):
                 numWhiteMills += 1
-                n = neighbours(i)
-                for j in n:
-                    if b[j] == 'x':
-                        break
-                    else:
-                        Whiteblockedpieces += 1
         elif b[i] == 'B':
             if closeMill(i, b):
                 numBlackMills += 1
@@ -42,9 +36,6 @@ def static_estimation(b):
             b1[i] = 'W'
             if closeMill(i,b1):
                 numW2piece += 1
-            b1[i] = 'B'
-            if closeMill(i,b1):
-                numB2piece += 1
     if numWhiteMills % 3 != 0:
         numWhiteMills = int(numWhiteMills/3) + 1
     else:
@@ -55,7 +46,7 @@ def static_estimation(b):
         numBlackMills = int(numBlackMills/3)
     if len(b) == 19:
         p2 = b[-1]
-    return  10 * (numWhitePieces - numBlackPieces) + 10 * (numWhiteMills - numBlackMills) + 4 * (p2) + 3 * numW2piece + 2 * Blackblockedpieces
+    return  10 * (numWhitePieces - numBlackPieces) + 10 * (numWhiteMills - numBlackMills) + 5 * (p2) + 3 * numW2piece + 1 * Blackblockedpieces
     
 
 def neighbours(j):
