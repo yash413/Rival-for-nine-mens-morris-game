@@ -55,7 +55,7 @@ def static_estimation(b):
         numBlackMills = int(numBlackMills/3)
     if len(b) == 19:
         p2 = b[-1]
-    return (Blackblockedpieces - Whiteblockedpieces) + 5 * (numWhiteMills - numBlackMills) + 4 * (p2) + 3 * (numW2piece - numB2piece) + 2 * (numWhitePieces - numBlackPieces)
+    return  10 * (numWhitePieces - numBlackPieces) + 10 * (numWhiteMills - numBlackMills) + 4 * (p2) + 3 * numW2piece + 2 * Blackblockedpieces
     
 
 def neighbours(j):
