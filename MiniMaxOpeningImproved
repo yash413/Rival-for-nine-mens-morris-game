@@ -11,13 +11,32 @@ def static_estimation(b):
     numBlackMills = 0
     numW2piece = 0 
     numB2piece = 0
+    Whiteblockedpieces = 0
+    Blackblockedpieces = 0
+    for i in b:
+        if i == "W":
+            numWhitePieces += 1
+        elif i == "B":
+            numBlackPieces += 1
     for i in range(len(b)):
         if b[i] == 'W':
             if closeMill(i, b):
                 numWhiteMills += 1
+                n = neighbours(i)
+                for j in n:
+                    if b[j] == 'x':
+                        break
+                    else:
+                        Whiteblockedpieces += 1
         elif b[i] == 'B':
             if closeMill(i, b):
                 numBlackMills += 1
+                n = neighbours(i)
+                for j in n:
+                    if b[j] == 'x':
+                        break
+                    else:
+                        Blackblockedpieces += 1
         elif b[i] == 'x':
             b1 = b[:]
             b1[i] = 'W'
@@ -34,14 +53,71 @@ def static_estimation(b):
         numBlackMills = int(numBlackMills/3) + 1
     else:
         numBlackMills = int(numBlackMills/3)
-    for i in b:
-        if i == "W":
-            numWhitePieces += 1
-        elif i == "B":
-            numBlackPieces += 1
     if len(b) == 19:
         p2 = b[-1]
-    return (20 * (numWhiteMills - numBlackMills)) + (15 * p2) + (10 * (numW2piece - numB2piece)) + 5 * (numWhitePieces - numBlackPieces)
+    return (Blackblockedpieces - Whiteblockedpieces) + 5 * (numWhiteMills - numBlackMills) + 4 * (p2) + 3 * (numW2piece - numB2piece) + 2 * (numWhitePieces - numBlackPieces)
+    
+
+def neighbours(j):
+    def zero():
+        return [1, 2, 15]
+
+    def one():
+        return [0, 3, 8]
+
+    def two():
+        return [0, 3, 4, 12]
+
+    def three():
+        return [1, 2, 5, 7]
+
+    def four():
+        return [2, 5, 9]
+
+    def five():
+        return [3, 4, 6]
+
+    def six():
+        return [5, 7, 11]
+
+    def seven():
+        return [3, 6, 8, 14]
+
+    def eight():
+        return [1, 7, 17]
+
+    def nine():
+        return [4, 10, 12]
+
+    def ten():
+        return [9, 11, 13]
+
+    def eleven():
+        return [6, 10, 14]
+
+    def twelve():
+        return [2, 9, 13, 15]
+
+    def thirteen():
+        return [10, 12, 14, 16]
+
+    def fourteen():
+        return [7, 11, 13, 17]
+
+    def fifteen():
+        return [0, 12, 16]
+
+    def sixteen():
+        return [13, 15, 17]
+
+    def seventeen():
+        return [8, 14, 16]
+
+    switch = {0: zero, 1: one, 2: two, 3: three, 4: four, 5: five,
+              6: six, 7: seven, 8: eight, 9: nine, 10: ten, 11: eleven,
+              12: twelve, 13: thirteen, 14: fourteen, 15: fifteen, 16: sixteen, 17: seventeen}
+
+    return switch[j]()
 
 
 def closeMill(j, b):
@@ -177,11 +253,6 @@ def generateRemove(b, L, p):
                 L.append(b1)
     a2 = len(L)
     if a1 == a2:
-        if p == d:
-            if d % 2 == 0:
-                b.append(int(-1))
-            else:
-                b.append(int(1))
         L.append(b)
 
 
