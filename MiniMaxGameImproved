@@ -64,7 +64,16 @@ def static_estimation(b):
     elif numBlackMoves(b) == 0:
         return 10000
     else:
-        return (25 * (numWhiteMills - numBlackMills)) + (15 * p2) + (20 * (Whiteblockedpieces - Blackblockedpieces)) + (10 * (numW2piece- numB2piece)) + (5 * (numWhitePieces - numBlackPieces)) - numBlackMoves(b)
+        return (40 * (numWhiteMills - numBlackMills)) + (30 * p2) + (20 * (Whiteblockedpieces - Blackblockedpieces)) + (20 * (numW2piece- numB2piece)) + (10 * (numWhitePieces - numBlackPieces)) + (10 * (numWhiteMoves(b) - numBlackMoves(b)))
+
+
+def numWhiteMoves(l):
+    n = GenerateMovesMidgameEndgame(l)
+    if n == 3:
+        x = GenerateHopping(l, 0)
+    else:
+        x = GenerateMove(l, 0)
+    return len(x)
 
 
 def numBlackMoves(l):
@@ -379,8 +388,8 @@ file1 = open(f1)
 l1 = list(file1.read())
 (A1, A2) = MaxMin(l1, 0)
 s = ""
-for i in A1:
-    s += i
+for i in range(18):
+    s += A1[i]
 file2 = open(f2, "w")
 file2.write("Board position is: " + s + "\n\n" + "Positions evaluated by static estimation: " + str(p1) + "\n\n"
             + "MINIMAX estimate: " + str(A2))

@@ -248,8 +248,8 @@ file1 = open(f1)
 l1 = list(file1.read())
 (A1, A2) = MaxMin(l1, 0)
 s = ""
-for i in A1:
-    s += i
+for i in range(18):
+    s += A1[i]
 file2 = open(f2, "w")
 file2.write("Board position is: " + s + "\n\n" + "Positions evaluated by static estimation: " + str(p1) + "\n\n"
             + "MINIMAX estimate: " + str(A2))
