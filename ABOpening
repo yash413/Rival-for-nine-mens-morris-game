@@ -232,10 +232,9 @@ d = int(d)
 file1 = open(f1)
 l1 = list(file1.read())
 s = ""
-for i in l1:
-    s += i
 count = 0
 for i in l1:
+    s += i
     if i == 'W':
         count += 1
 if d == 0:

@@ -4,13 +4,8 @@ p1 = 0
 def static_estimation(b):
     global p1
     p1 += 1
-    numWhitePieces = 0
-    numBlackPieces = 0
-    for i in b:
-        if i == "W":
-            numWhitePieces += 1
-        elif i == "B":
-            numBlackPieces += 1
+    numWhitePieces = countofpieces(b, 'W')
+    numBlackPieces = countofpieces(b, 'B')
     if numBlackPieces <= 2:
         return 10000
     elif numWhitePieces <= 2:
@@ -19,6 +14,14 @@ def static_estimation(b):
         return 10000
     else:
         return (1000 * (numWhitePieces - numBlackPieces)) - numBlackMoves(b)
+
+
+def countofpieces(b, x):
+    count = 0
+    for i in b:
+        if i == x:
+            count += 1
+    return count
 
 
 def numBlackMoves(l):
@@ -275,8 +278,17 @@ def WtB(a):
     return b
 
 
+def leaf(b):
+    numWpieces = countofpieces(b, 'W')
+    numBpieces = countofpieces(b, 'B')
+    if numWpieces < 3 or numBpieces < 3:
+        return True
+    else:
+        return False
+
+
 def MinMax_alb(b, ply, al, beta):
-    if ply == d:
+    if leaf(b) or ply == d:
         return static_estimation(b)
     else:
         ply += 1
@@ -298,7 +310,7 @@ def MinMax_alb(b, ply, al, beta):
 
 
 def MaxMin_alb(a, ply, al, beta):
-    if ply == d:
+    if leaf(a) or ply == d:
         return static_estimation(a)
     else:
         ply += 1
@@ -332,10 +344,28 @@ def MaxMin_alb(a, ply, al, beta):
 d = int(d)
 file1 = open(f1)
 l1 = list(file1.read())
-(A1, A2) = MaxMin_alb(l1, 0, -10000, 10000)
 s = ""
-for i in A1:
+Whitepieces = countofpieces(l1, 'W')
+Blackpieces = countofpieces(l1, 'B')
+for i in l1:
     s += i
-file2 = open(f2, "w")
-file2.write("Board position is: " + s + "\n\n" + "Positions evaluated by static estimation: " + str(p1) + "\n\n"
-            + "MINIMAX estimate: " + str(A2))
+if d == 0:
+    file2 = open(f2, "w")
+    file2.write("No moves are calculated" + "\n\n" + "Board position is: " + s)
+elif Whitepieces < 3 and Blackpieces < 3:
+    file2 = open(f2, "w")
+    file2.write("Not a vaid board position, PLEASE check it")
+elif Whitepieces < 3:
+    file2 = open(f2, "w")
+    file2.write("You have lost the game man, SORRY!!!" + "\n\n" + "Final Board position is: " + s)
+elif Blackpieces < 3:
+    file2 = open(f2, "w")
+    file2.write("CONGRATULATIONS!!!, You have won the game" + "\n\n" + "Final Board position is: " + s)
+else:
+    (A1, A2) = MaxMin_alb(l1, 0, -10000, 10000)
+    s = ""
+    for i in A1:
+        s += i
+    file2 = open(f2, "w")
+    file2.write("Board position is: " + s + "\n\n" + "Positions evaluated by static estimation: " + str(p1) + "\n\n"
+                + "MINIMAX estimate: " + str(A2))
