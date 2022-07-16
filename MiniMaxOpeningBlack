@@ -183,7 +183,7 @@ def leaf(b):
 
 
 def MinMax(b, p):
-    if p == d:
+    if leaf(b) or p == d:
         return static_estimation(b)
     else:
         p += 1
@@ -197,7 +197,7 @@ def MinMax(b, p):
 
 
 def MaxMin(a, ply):
-    if leaf(a) or ply == d:
+    if ply == d:
         return static_estimation(a)
     else:
         ply += 1
