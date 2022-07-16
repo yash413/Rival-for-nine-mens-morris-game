@@ -168,6 +168,20 @@ def WtB(a):
     return b
 
 
+def leaf(b):
+    numWhitepieces = 0
+    numBlackpieces = 0
+    for i in b:
+        if i == 'W':
+            numWhitepieces += 1
+        elif i == 'B':
+            numBlackpieces += 1
+    if (numWhitepieces == 8 or numBlackpieces == 8):
+        return True
+    else:
+        return False
+
+
 def MinMax_alb(b, p, al, beta):
     if p == d:
         return static_estimation(b)
@@ -187,7 +201,7 @@ def MinMax_alb(b, p, al, beta):
 
 
 def MaxMin_alb(a, ply, al, beta):
-    if ply == d:
+    if leaf(a) or ply == d:
         return static_estimation(a)
     else:
         ply += 1
@@ -217,10 +231,24 @@ def MaxMin_alb(a, ply, al, beta):
 d = int(d)
 file1 = open(f1)
 l1 = list(file1.read())
-(A1, A2) = MaxMin_alb(l1, 0, -10000, 10000)
 s = ""
-for i in A1:
+for i in l1:
     s += i
-file2 = open(f2, "w")
-file2.write("Board position is: " + s + "\n\n" + "Positions evaluated by static estimation: " + str(p1) + "\n\n"
-            + "MINIMAX estimate: " + str(A2))
+count = 0
+for i in l1:
+    if i == 'W':
+        count += 1
+if d == 0:
+    file2 = open(f2, "w")
+    file2.write("No moves are calculated" + "\n\n" + "Board position is: " + s)
+elif count == 8:
+    file2 = open(f2, "w")
+    file2.write("No further moves are there" + "\n\n" + "The opening game is completed for the player" + "\n\n" + "Board position is: " + s )
+else:
+    (A1, A2) = MaxMin_alb(l1, 0, -10000, 10000)
+    s = ""
+    for i in A1:
+        s += i
+    file2 = open(f2, "w")
+    file2.write("Board position is: " + s + "\n\n" + "Positions evaluated by static estimation: " + str(p1) + "\n\n"
+                + "MINIMAX estimate: " + str(A2))
