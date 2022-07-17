@@ -1,23 +1,26 @@
-p1 = 0
+positions_evaluated = 0
 
-
+# Static estimation function
+# Calculates the static estimate value of the board position when the leaf nodes are reached
+# Input: Board position and the depth is given as the input
+# Output: A value is returned for the given board position
 def static_estimation(b, ply):
-    global p1
-    p1 += 1
-    p2 = 0
+    global positions_evaluated
+    positions_evaluated += 1
+    possiblemill = 0
     numWhitePieces = countofpieces(b, 'W')
     numBlackPieces = countofpieces(b, 'B')
     numWhiteMills = 0
     numBlackMills = 0
     numW2piece = 0 
-    numB2piece = 0
-    Whiteblockedpieces = 0
     Blackblockedpieces = 0
     Bmoves = numBlackMoves(b)
     if numBlackPieces <= 2 or Bmoves == 0:
         return 10000 - ply
     elif numWhitePieces <= 2:
         return -10000 + ply
+    
+# Calculating number of White and Black Mills    
     for i in range(len(b)):
         if b[i] == 'W':
             if closeMill(i, b):
@@ -26,12 +29,16 @@ def static_estimation(b, ply):
             if closeMill(i, b):
                 numBlackMills += 1
             if numBlackPieces > 3:
+                
+# Calculating number of Black pieces blocked                
                 n = neighbours(i)
                 for j in n:
                     if b[j] == 'x':
                         break
                     else:
                         Blackblockedpieces += 1
+        
+# Calculating the number of 2 piece configurations for the White        
         elif b[i] == 'x':
             b1 = b[:]
             b1[i] = 'W'
@@ -46,12 +53,14 @@ def static_estimation(b, ply):
     else:
         numBlackMills = int(numBlackMills/3)
     if len(b) == 19:
-        p2 = b[-1]
+        possiblemill = b[-1]
     
-    return 100 * (numWhitePieces - numBlackPieces) + 100 * (numWhiteMills - numBlackMills) + 50 * p2 + 40 * Blackblockedpieces + 30 * numW2piece - 10 * Bmoves
-#    return (40 * (numWhiteMills - numBlackMills)) + (30 * p2) + (20 * (Whiteblockedpieces - Blackblockedpieces)) + (20 * (numW2piece- numB2piece)) + (10 * (numWhitePieces - numBlackPieces)) + (10 * (numWhiteMoves(b) - Bmoves))
+    return 100 * (numWhitePieces - numBlackPieces) + 100 * (numWhiteMills - numBlackMills) + 50 * possiblemill + 40 * Blackblockedpieces + 30 * numW2piece - 10 * Bmoves
 
-
+# countofpieces function
+# Counts the number of specified pieces (White or Black) in the given board position
+# Input: a board position and a specific piece(black or white)
+# Output: returns the number of specified pieces (White or Black) in the given board position
 def countofpieces(b, x):
     count = 0
     for i in b:
@@ -59,7 +68,10 @@ def countofpieces(b, x):
             count += 1
     return count
 
-
+# numWhiteMoves function
+# calculates the number of possible moves for the white for the given board
+# Input: a board position
+# Output: returns the number of moves possible for white for the given board position
 def numWhiteMoves(l):
     n = GenerateMovesMidgameEndgame(l)
     if n == 3:
@@ -68,7 +80,10 @@ def numWhiteMoves(l):
         x = GenerateMove(l, 0)
     return len(x)
 
-
+# numBlackMoves function
+# calculates the number of possible moves for the black for the given board
+# Input: a board position
+# Output: returns the number of moves possible for black for the given board position
 def numBlackMoves(l):
     ll = WtB(l)
     n = GenerateMovesMidgameEndgame(ll)
@@ -78,7 +93,10 @@ def numBlackMoves(l):
         x = GenerateMove(ll, 0)
     return len(x)
 
-
+# neighbours function
+# Returns the neighbours of the given location
+# Input: a location j in the array representing the board
+# Output: a list of locations in the array corresponding to j’s neighbors
 def neighbours(j):
     def zero():
         return [1, 2, 15]
@@ -140,7 +158,10 @@ def neighbours(j):
 
     return switch[j]()
 
-
+# closeMill function 
+# To check if the current move makes a mill
+# Input: a location j in the array representing the board and the board b
+# Output: returns True if the move to j closes a mill or else returns False
 def closeMill(j, b):
     C = b[j]
 
@@ -258,30 +279,40 @@ def closeMill(j, b):
 
     return switch[j]()
 
-
-def generateRemove(b, L, p):
+# generateRemove function
+# Removes the Blackpieces from the given board which are not in the mill and adds that position to the list
+# Input: a board position, a list L and the depth
+# Output: positions are added to L by removing black pieces
+# If no blackpieces can be removed the given board is added to the list
+def generateRemove(b, L, ply):
     a1 = len(L)
     for i in range(len(b)):
         if b[i] == "B":
             if not closeMill(i, b):
                 b1 = b[:]
                 b1[i] = 'x'
-                if p == d:
-                    if d % 2 == 0:
+                
+# If a closed mill is formed in the last level append a 1 or -1 based on the closed mill is of White's or Black's respectively
+# We use this as a evaluating factor in the static estimation function                        \
+                if ply == depth:
+                    if depth % 2 == 0:
                         b1.append(int(-1))
                     else:
                         b1.append(int(1))
                 L.append(b1)
     a2 = len(L)
     if a1 == a2:
-        if p == d:
-            if d % 2 == 0:
+        if ply == depth:
+            if depth % 2 == 0:
                 b.append(int(-1))
             else:
                 b.append(int(1))
         L.append(b)
 
-
+# GenerateMove function
+# generates moves created by moving a white piece to an adjacent location
+# Input: a board position and the depth
+# Output: a list L of board positions
 def GenerateMove(b, ply):
     L = []
     for i in range(len(b)):
@@ -298,7 +329,10 @@ def GenerateMove(b, ply):
                         L.append(b1)
     return L
 
-
+# GenerateHopping function
+# generates moves created by hopping a white piece
+# Input: a board position and the depth
+# Output: a list L of board positions
 def GenerateHopping(b, ply):
     L = []
     for i in range(len(b)):
@@ -314,7 +348,11 @@ def GenerateHopping(b, ply):
                         L.append(b1)
     return L
 
-
+# GenerateMovesMidgameEndgame
+# Determines whether to use GenerateMoves or GenerateHopping
+# Input: a board position
+# Output: the number of whitepieces
+# if it is equal to 3 hopping is executeed or else GenerateMoves is executed in the MaxMin or MinMax function
 def GenerateMovesMidgameEndgame(b):
     n = 0
     for i in b:
@@ -322,17 +360,23 @@ def GenerateMovesMidgameEndgame(b):
             n += 1
     return n
 
+# WtB function
+# Converts all the whitepieces to black and blackpieces to white
+# Input: a board position
+# Output: a board position where all the whites are swapped to black and vice-versa
+def WtB(b):
+    b1 = b[:]
+    for i in range(len(b1)):
+        if b1[i] == "W":
+            b1[i] = "B"
+        elif b1[i] == "B":
+            b1[i] = "W"
+    return b1
 
-def WtB(a):
-    b = a[:]
-    for i in range(len(b)):
-        if b[i] == "W":
-            b[i] = "B"
-        elif b[i] == "B":
-            b[i] = "W"
-    return b
-
-
+# leaf function
+# Checks if the given board posiition is a leaf
+# Input: a board position and the depth
+# Output: returns True if the given board position is a leaf or else returns False
 def leaf(b, ply):
     numWpieces = countofpieces(b, 'W')
     numBpieces = countofpieces(b, 'B')
@@ -347,36 +391,46 @@ def leaf(b, ply):
     else:
         return False
 
-
-def MinMax(b, p):
-    if leaf(b, p) or p == d:
-        return static_estimation(b, p)
+# MinMax function
+# Generates the moves for the current min node position and returns the minimum value for all the generated moves based on static estimation value
+# Input: a board position and the depth of the current node posiition
+# Output: if    a leaf node or a node at the maximum depth is reached it returns the static estimation value of that board position
+#         else  Generates the min node moves for the current board position and compares the current minimum value with MaxMin value of all 
+#               generated moves and returns the minimum value.
+def MinMax(b, ply):
+    if leaf(b, ply) or ply == depth:
+        return static_estimation(b, ply)
     else:
-        p += 1
+        ply += 1
         b = WtB(b)
         v = 10000
         n = GenerateMovesMidgameEndgame(b)
         if n == 3:
-            x = GenerateHopping(b, p)
+            x = GenerateHopping(b, ply)
         else:
-            x = GenerateMove(b, p)
+            x = GenerateMove(b, ply)
         for i in x:
             i = WtB(i)
-            v = min(v, MaxMin(i, p))
+            v = min(v, MaxMin(i, ply))
         return v
 
-
-def MaxMin(a, ply):
-    if leaf(a, ply) or ply == d:
-        return static_estimation(a, ply)
+# MaxMin function
+# Generates the moves for the current max node position and returns the maximum value for all the generated moves based on static estimation value
+# Input: a board position and the depth of the current node posiition
+# Output: if    a leaf node or a node at the maximum depth is reached it returns the static estimation value of that board position
+#         else  Generates the max node moves for the current board position and compares the current maximum value with MinMax value of all 
+#               generated moves and returns the maximum value. If the depth is 1, the board position for the max value is also returned.
+def MaxMin(b, ply):
+    if leaf(b, ply) or ply == depth:
+        return static_estimation(b, ply)
     else:
         ply += 1
         v = -10000
-        n = GenerateMovesMidgameEndgame(a)
+        n = GenerateMovesMidgameEndgame(b)
         if n == 3:
-            y = GenerateHopping(a, ply)
+            y = GenerateHopping(b, ply)
         else:
-            y = GenerateMove(a, ply)
+            y = GenerateMove(b, ply)
         x = 0
         for i in y:
             m = MinMax(i, ply)
@@ -389,9 +443,9 @@ def MaxMin(a, ply):
             return x, v
         return v
 
-
-(f1, f2, d) = list(input().split())
-d = int(d)
+# Input of the program
+(f1, f2, depth) = list(input().split())
+depth = int(depth)
 file1 = open(f1)
 l1 = list(file1.read())
 s = ""
@@ -399,27 +453,39 @@ Whitepieces = countofpieces(l1, 'W')
 Blackpieces = countofpieces(l1, 'B')
 for i in l1:
     s += i
-if d == 0:
+
+# Checks if the given depth is 0
+if depth == 0:
     file2 = open(f2, "w")
     file2.write("No moves are calculated" + "\n\n" + "Board position is: " + s)
+
+# checks if the board position is valid
 elif Whitepieces < 3 and Blackpieces < 3:
     file2 = open(f2, "w")
     file2.write("Not a vaid board position, PLEASE check it")
+
+# checks if we have lost already
 elif Whitepieces < 3 or numWhiteMoves(l1) == 0:
     file2 = open(f2, "w")
     file2.write("You have lost the game man, SORRY!!!" + "\n\n" + "Final Board position is: " + s)
+
+# checks if we have won already
 elif Blackpieces < 3 or numBlackMoves(l1) == 0:
     file2 = open(f2, "w")
     file2.write("CONGRATULATIONS!!!, You have won the game" + "\n\n" + "Final Board position is: " + s)
+
+# If none of the above conditions are satisfied MaxMin algorithm is executed
 else:
     (A1, A2) = MaxMin(l1, 0)
     s = ""
     for i in A1:
         s += i
+
+# Checks if the next move the player makes will finish the game        
     if A2 == 9999:
         file2 = open(f2, "w")
         file2.write("CONGRATULATIONS!!!, You have won the game" + "\n\n" + "Final Board position is: " + s)
     else:
         file2 = open(f2, "w")
-        file2.write("Board position is: " + s + "\n\n" + "Positions evaluated by static estimation: " + str(p1) + "\n\n"
+        file2.write("Board position is: " + s + "\n\n" + "Positions evaluated by static estimation: " + str(positions_evaluated) + "\n\n"
                     + "MINIMAX estimate: " + str(A2))
