@@ -14,12 +14,10 @@ def static_estimation(b, ply):
     Whiteblockedpieces = 0
     Blackblockedpieces = 0
     Bmoves = numBlackMoves(b)
-    if numBlackPieces <= 2:
+    if numBlackPieces <= 2 or Bmoves == 0:
         return 10000 - ply
     elif numWhitePieces <= 2:
         return -10000 + ply
-    elif Bmoves == 0:
-        return 10000 - ply
     for i in range(len(b)):
         if b[i] == 'W':
             if closeMill(i, b):
@@ -335,17 +333,23 @@ def WtB(a):
     return b
 
 
-def leaf(b):
+def leaf(b, ply):
     numWpieces = countofpieces(b, 'W')
     numBpieces = countofpieces(b, 'B')
     if numWpieces < 3 or numBpieces < 3:
         return True
+    elif ply % 2 == 0:
+        if numWhiteMoves(b) == 0:
+            return True
+    elif ply % 2 != 0:
+        if numBlackMoves(b) == 0:
+            return True
     else:
         return False
 
 
 def MinMax(b, p):
-    if leaf(b) or p == d:
+    if leaf(b, p) or p == d:
         return static_estimation(b, p)
     else:
         p += 1
@@ -363,7 +367,7 @@ def MinMax(b, p):
 
 
 def MaxMin(a, ply):
-    if leaf(a) or ply == d:
+    if leaf(a, ply) or ply == d:
         return static_estimation(a, ply)
     else:
         ply += 1
@@ -412,6 +416,10 @@ else:
     s = ""
     for i in A1:
         s += i
-    file2 = open(f2, "w")
-    file2.write("Board position is: " + s + "\n\n" + "Positions evaluated by static estimation: " + str(p1) + "\n\n"
-                + "MINIMAX estimate: " + str(A2))
+    if A2 == 9999:
+        file2 = open(f2, "w")
+        file2.write("CONGRATULATIONS!!!, You have won the game" + "\n\n" + "Final Board position is: " + s)
+    else:
+        file2 = open(f2, "w")
+        file2.write("Board position is: " + s + "\n\n" + "Positions evaluated by static estimation: " + str(p1) + "\n\n"
+                    + "MINIMAX estimate: " + str(A2))

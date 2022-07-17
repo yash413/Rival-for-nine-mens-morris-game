@@ -27,9 +27,9 @@ def countofpieces(b, x):
 def numWhiteMoves(l):
     n = GenerateMovesMidgameEndgame(l)
     if n == 3:
-        x = GenerateHopping(l, 0)
+        x = GenerateHopping(l)
     else:
-        x = GenerateMove(l, 0)
+        x = GenerateMove(l)
     return len(x)
 
 
