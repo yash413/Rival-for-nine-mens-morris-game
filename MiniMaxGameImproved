@@ -1,34 +1,29 @@
 p1 = 0
 
 
-def static_estimation(b):
+def static_estimation(b, ply):
     global p1
     p1 += 1
     p2 = 0
-    numWhitePieces = 0
-    numBlackPieces = 0
+    numWhitePieces = countofpieces(b, 'W')
+    numBlackPieces = countofpieces(b, 'B')
     numWhiteMills = 0
     numBlackMills = 0
     numW2piece = 0 
     numB2piece = 0
     Whiteblockedpieces = 0
     Blackblockedpieces = 0
-    for i in b:
-        if i == "W":
-            numWhitePieces += 1
-        elif i == "B":
-            numBlackPieces += 1
+    Bmoves = numBlackMoves(b)
+    if numBlackPieces <= 2:
+        return 10000 - ply
+    elif numWhitePieces <= 2:
+        return -10000 + ply
+    elif Bmoves == 0:
+        return 10000 - ply
     for i in range(len(b)):
         if b[i] == 'W':
             if closeMill(i, b):
                 numWhiteMills += 1
-            if numWhitePieces > 3:
-                n = neighbours(i)
-                for j in n:
-                    if b[j] == 'x':
-                        break
-                    else:
-                        Whiteblockedpieces += 1
         elif b[i] == 'B':
             if closeMill(i, b):
                 numBlackMills += 1
@@ -44,9 +39,6 @@ def static_estimation(b):
             b1[i] = 'W'
             if closeMill(i,b1):
                 numW2piece += 1
-            b1[i] = 'B'
-            if closeMill(i,b1):
-                numB2piece += 1
     if numWhiteMills % 3 != 0:
         numWhiteMills = int(numWhiteMills/3) + 1
     else:
@@ -57,14 +49,17 @@ def static_estimation(b):
         numBlackMills = int(numBlackMills/3)
     if len(b) == 19:
         p2 = b[-1]
-    if numBlackPieces <= 2:
-        return 10000
-    elif numWhitePieces <= 2:
-        return -10000
-    elif numBlackMoves(b) == 0:
-        return 10000
-    else:
-        return (40 * (numWhiteMills - numBlackMills)) + (30 * p2) + (20 * (Whiteblockedpieces - Blackblockedpieces)) + (20 * (numW2piece- numB2piece)) + (10 * (numWhitePieces - numBlackPieces)) + (10 * (numWhiteMoves(b) - numBlackMoves(b)))
+    
+    return 100 * (numWhitePieces - numBlackPieces) + 100 * (numWhiteMills - numBlackMills) + 50 * p2 + 40 * Blackblockedpieces + 30 * numW2piece - 10 * Bmoves
+#    return (40 * (numWhiteMills - numBlackMills)) + (30 * p2) + (20 * (Whiteblockedpieces - Blackblockedpieces)) + (20 * (numW2piece- numB2piece)) + (10 * (numWhitePieces - numBlackPieces)) + (10 * (numWhiteMoves(b) - Bmoves))
+
+
+def countofpieces(b, x):
+    count = 0
+    for i in b:
+        if i == x:
+            count += 1
+    return count
 
 
 def numWhiteMoves(l):
@@ -340,9 +335,18 @@ def WtB(a):
     return b
 
 
+def leaf(b):
+    numWpieces = countofpieces(b, 'W')
+    numBpieces = countofpieces(b, 'B')
+    if numWpieces < 3 or numBpieces < 3:
+        return True
+    else:
+        return False
+
+
 def MinMax(b, p):
-    if p == d:
-        return static_estimation(b)
+    if leaf(b) or p == d:
+        return static_estimation(b, p)
     else:
         p += 1
         b = WtB(b)
@@ -359,8 +363,8 @@ def MinMax(b, p):
 
 
 def MaxMin(a, ply):
-    if ply == d:
-        return static_estimation(a)
+    if leaf(a) or ply == d:
+        return static_estimation(a, ply)
     else:
         ply += 1
         v = -10000
@@ -386,10 +390,28 @@ def MaxMin(a, ply):
 d = int(d)
 file1 = open(f1)
 l1 = list(file1.read())
-(A1, A2) = MaxMin(l1, 0)
 s = ""
-for i in range(18):
-    s += A1[i]
-file2 = open(f2, "w")
-file2.write("Board position is: " + s + "\n\n" + "Positions evaluated by static estimation: " + str(p1) + "\n\n"
-            + "MINIMAX estimate: " + str(A2))
+Whitepieces = countofpieces(l1, 'W')
+Blackpieces = countofpieces(l1, 'B')
+for i in l1:
+    s += i
+if d == 0:
+    file2 = open(f2, "w")
+    file2.write("No moves are calculated" + "\n\n" + "Board position is: " + s)
+elif Whitepieces < 3 and Blackpieces < 3:
+    file2 = open(f2, "w")
+    file2.write("Not a vaid board position, PLEASE check it")
+elif Whitepieces < 3 or numWhiteMoves(l1) == 0:
+    file2 = open(f2, "w")
+    file2.write("You have lost the game man, SORRY!!!" + "\n\n" + "Final Board position is: " + s)
+elif Blackpieces < 3 or numBlackMoves(l1) == 0:
+    file2 = open(f2, "w")
+    file2.write("CONGRATULATIONS!!!, You have won the game" + "\n\n" + "Final Board position is: " + s)
+else:
+    (A1, A2) = MaxMin(l1, 0)
+    s = ""
+    for i in A1:
+        s += i
+    file2 = open(f2, "w")
+    file2.write("Board position is: " + s + "\n\n" + "Positions evaluated by static estimation: " + str(p1) + "\n\n"
+                + "MINIMAX estimate: " + str(A2))

@@ -24,6 +24,15 @@ def countofpieces(b, x):
     return count
 
 
+def numWhiteMoves(l):
+    n = GenerateMovesMidgameEndgame(l)
+    if n == 3:
+        x = GenerateHopping(l, 0)
+    else:
+        x = GenerateMove(l, 0)
+    return len(x)
+
+
 def numBlackMoves(l):
     ll = WtB(l)
     n = GenerateMovesMidgameEndgame(ll)
@@ -345,10 +354,10 @@ if d == 0:
 elif Whitepieces < 3 and Blackpieces < 3:
     file2 = open(f2, "w")
     file2.write("Not a vaid board position, PLEASE check it")
-elif Whitepieces < 3:
+elif Whitepieces < 3 or numWhiteMoves(l1) == 0:
     file2 = open(f2, "w")
     file2.write("You have lost the game man, SORRY!!!" + "\n\n" + "Final Board position is: " + s)
-elif Blackpieces < 3:
+elif Blackpieces < 3 or numBlackMoves(l1) == 0:
     file2 = open(f2, "w")
     file2.write("CONGRATULATIONS!!!, You have won the game" + "\n\n" + "Final Board position is: " + s)
 else:
