@@ -207,7 +207,7 @@ def leaf(b):
 #         else  Generates the min node moves for the current board position and compares the current minimum value with MaxMin value of all 
 #               generated moves and returns the minimum value.
 def MinMax(b, ply):
-    if leaf(b) or ply == depth:
+    if ply == depth:
         return static_estimation(b)
     else:
         ply += 1
@@ -225,7 +225,7 @@ def MinMax(b, ply):
 # Output: Generates the max node moves for the current board position and compares the current maximum value with MinMax value of all 
 #         generated moves and returns the maximum value. If the depth is 1, the board position for the max value is also returned.
 def MaxMin(b, ply):
-    if ply == depth:
+    if leaf(b) or ply == depth:
         return static_estimation(b)
     else:
         ply += 1
